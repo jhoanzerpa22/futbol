@@ -20,9 +20,9 @@ Url para verificar si el jugador es una estrella
 */
 $app->post('/star', function ($request, $res, $next) use ($estrella) {
     $response = array();
-    $allPost = $request->getParsedBody();
+    //$allPost = $request->getParsedBody();
     //$allPost['history']= '{ "history": ["GPPEAG", "EGEAAG", "PAGEPG", "PGGGAE", "AEEEEG", "GPAPPA"] }';
-    $history = json_decode($allPost['history'], TRUE);
+    $history = json_decode(file_get_contents('php://input'), true);
     $star = isStar($history);
     if($star == false){
     $response["status"] = 403;
@@ -36,8 +36,9 @@ $app->post('/star', function ($request, $res, $next) use ($estrella) {
     $status=200;
     }
     //Guardamos el historico de la consulta
-    $estrella->saveHistorico($allPost['history'],$star);
+    //$estrella->saveHistorico($allPost['history'],$star);
     return $res->withStatus($status)->withJson($response);
+
 });
 
 //Funcion que verifica si el jugador es una estrella
@@ -75,7 +76,7 @@ foreach ($historial as $key => $value) {
     }
     $i++;
 }
-    if ($h > 0 || $v > 0 || $o > 0) {
+    if (($h > 1 || $v > 1 || $o > 1) || ($h > 0 && $v > 0) || ($h > 0 && $o > 0) || ($v > 0 && $o > 0)) {
         return true;
     }else{
         return false;
